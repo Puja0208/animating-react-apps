@@ -1,4 +1,6 @@
 import React, { Component } from "react";
+// import Transition from "react-transition-group/Transition";
+import { Transition } from "react-transition-group";
 
 import "./App.css";
 import Modal from "./components/Modal/Modal";
@@ -8,6 +10,7 @@ import List from "./components/List/List";
 class App extends Component {
   state = {
     modalIsOpen: false,
+    showBlock: false,
   };
 
   showModal = () => {
@@ -17,12 +20,52 @@ class App extends Component {
   closeModal = () => {
     this.setState({ modalIsOpen: false });
   };
+  clickHandler = () => {
+    console.log("clicked");
+    this.setState((prevState) => ({ showBlock: !prevState.showBlock }));
+    console.log(this.state.showBlock);
+  };
   render() {
     return (
       <div className="App">
         <h1>React Animations</h1>
-        <Modal show={this.state.modalIsOpen} closed={this.closeModal} />
-        <Backdrop show={this.state.modalIsOpen} />
+        <button className="Button" onClick={this.clickHandler}>
+          Toggle
+        </button>
+
+        <br />
+        <Transition
+          in={this.state.showBlock}
+          timeout={1000}
+          mountOnEnter
+          unmountOnExit
+        >
+          {(state) => (
+            <div
+              style={{
+                backgroundColor: "red",
+                width: 100,
+                height: 100,
+                margin: "auto",
+                transition: "opacity 1s ease-out",
+                opacity: state === "exiting" ? 0 : 1,
+              }}
+            ></div>
+          )}
+        </Transition>
+
+        {/* {this.showBlock ? (
+          <div
+            style={{ backgroundColor: "red", width: 100, height: 100 }}
+          ></div>
+        ) : null} */}
+
+        {this.state.modalIsOpen ? (
+          <Modal show={this.state.modalIsOpen} closed={this.closeModal} />
+        ) : null}
+        {this.state.modalIsOpen ? (
+          <Backdrop show={this.state.modalIsOpen} />
+        ) : null}
         <button className="Button" onClick={this.showModal}>
           Open Modal
         </button>
